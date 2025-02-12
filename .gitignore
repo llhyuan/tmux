@@ -1,0 +1,5 @@
+# Ignore plugin directory 
+plugins/
+
+# Operating System Files
+.DS_Store
