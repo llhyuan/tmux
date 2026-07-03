@@ -10,9 +10,9 @@
 # transition is stitched back together where whoami used to sit.
 left="#[fg=colour233,bg=colour245,bold] #S #[fg=colour245,bg=colour235,nobold]#[fg=colour240,bg=colour235] #I:#P #[fg=colour235,bg=colour233,nobold]"
 
-# Right: alert segment (empty unless a Claude is waiting) + one bright time
-# block that mirrors the left session block.
-right="#(~/.config/tmux/scripts/claude-alerts.sh)#[fg=colour233,bg=colour245,bold] %H:%M:%S #[default]"
+# Right: alert segment (empty unless a Claude is waiting) + one bright block
+# (weekday, MM-DD, time) that mirrors the left session block.
+right="#(~/.config/tmux/scripts/claude-alerts.sh)#[fg=colour233,bg=colour245,bold] %a %m-%d %H:%M:%S #[default]"
 
 apply() {
   tmux set -g status-left-length 60
