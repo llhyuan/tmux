@@ -19,24 +19,22 @@ state_dir="$HOME/.config/tmux/state"
 
 tmux list-sessions -F '#{session_name}' 2>/dev/null | while IFS= read -r s; do
   safe=$(printf '%s' "$s" | tr -c 'A-Za-z0-9._-' '_')
-  state_file="$state_dir/claude-alert-$safe"
-  a=$(tmux display-message -p -t "$s" '#{session_alerts}' 2>/dev/null)
-  case "$a" in
-  *'!'*)
-    # Pick the block colour from the recorded category (default: wait/yellow).
-    # fg=#282828 is dark Gruvbox text; legible on all three backgrounds.
-    cat=wait
-    [ -f "$state_file" ] && cat=$(cat "$state_file" 2>/dev/null)
-    case "$cat" in
+  # Check if any per-window alert file exists for this session.
+  urgent=
+  for f in "$state_dir/claude-alert-${safe}"-*; do
+    [ -f "$f" ] || continue
+    c=$(cat "$f" 2>/dev/null)
+    case "$c" in
+      perm) urgent=perm; break ;;
+      wait) urgent=wait ;;
+      info) [ -z "$urgent" ] && urgent=info ;;
+    esac
+  done
+  [ -z "$urgent" ] && continue
+  case "$urgent" in
     perm) bg='#fb4934' ;;   # red    - needs permission
     info) bg='#83a598' ;;   # aqua   - informational
     *)    bg='#fabd2f' ;;   # yellow - waiting / unknown
-    esac
-    printf ' #[fg=#282828,bg=%s,bold]  %s %s  #[default]' "$bg" "$icon" "$s"
-    ;;
-  *)
-    # No pending bell: clear any stale category so the colour resets next ring.
-    [ -f "$state_file" ] && rm -f "$state_file" 2>/dev/null
-    ;;
   esac
+  printf ' #[fg=#282828,bg=%s,bold]  %s %s  #[default]' "$bg" "$icon" "$s"
 done

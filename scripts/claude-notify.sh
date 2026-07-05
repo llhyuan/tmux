@@ -37,7 +37,8 @@ if [ -n "$session" ]; then
   state_dir="$HOME/.config/tmux/state"
   mkdir -p "$state_dir" 2>/dev/null
   safe=$(printf '%s' "$session" | tr -c 'A-Za-z0-9._-' '_')
-  printf '%s' "$cat" > "$state_dir/claude-alert-$safe" 2>/dev/null
+  window=$(tmux display-message -p -t "$TMUX_PANE" '#{window_index}' 2>/dev/null)
+  printf '%s' "$cat" > "$state_dir/claude-alert-${safe}-${window}" 2>/dev/null
 fi
 
 # Ring the bell so tmux sets the session alert (mirrors the old inline hook).
