@@ -44,4 +44,7 @@ fi
 # Ring the bell so tmux sets the session alert (mirrors the old inline hook).
 tmux set-window-option -t "$TMUX_PANE" monitor-bell on 2>/dev/null
 [ -n "$tty" ] && printf '\a' > "$tty" 2>/dev/null
+# Repaint the status bar immediately so the alert segment appears now, not at
+# the next status-interval tick.
+tmux refresh-client -S 2>/dev/null
 true

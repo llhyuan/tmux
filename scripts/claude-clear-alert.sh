@@ -14,7 +14,13 @@ if [[ -n "${TMUX_PANE:-}" ]]; then
     window=$(tmux display-message -p -t "$TMUX_PANE" '#{window_index}' 2>/dev/null)
     [[ -z "$session" || -z "$window" ]] && exit 0
     safe=$(printf '%s' "$session" | tr -c 'A-Za-z0-9._-' '_')
-    rm -f "$state_dir/claude-alert-${safe}-${window}" 2>/dev/null
+    state_file="$state_dir/claude-alert-${safe}-${window}"
+    # Only redraw the status bar if we actually cleared something, so a plain
+    # prompt submit with no pending alert costs nothing.
+    if [[ -f "$state_file" ]]; then
+        rm -f "$state_file" 2>/dev/null
+        tmux refresh-client -S 2>/dev/null
+    fi
 else
     # Values are passed as env vars by the tmux hook, expanded at fire time.
     [[ -z "${SESSION:-}" || -z "${WINDOW:-}" || -z "${PANE_PID:-}" ]] && exit 0
@@ -29,6 +35,9 @@ else
         while [[ $pid -gt 1 ]]; do
             if [[ $pid == $pane_pid ]]; then
                 rm -f "$state_file"
+                # Repaint now so the bell vanishes instantly instead of at the
+                # next status-interval tick.
+                tmux refresh-client -S 2>/dev/null
                 exit 0
             fi
             pid=$(ps -o ppid= -p $pid 2>/dev/null | tr -d ' ')
