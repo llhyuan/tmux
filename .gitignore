@@ -1,5 +1,7 @@
 # Ignore plugin directory 
 plugins/
 
+# It's used to store claude session notification status. Stay local
+state/
 # Operating System Files
 .DS_Store
