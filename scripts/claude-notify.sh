@@ -20,9 +20,9 @@ payload=$(cat 2>/dev/null)
 msg=$(printf '%s' "$payload" | jq -r '.message // empty' 2>/dev/null)
 
 case "$msg" in
-*[Pp]ermission*|*[Aa]pprove*) cat=perm ;;
-*[Ww]aiting*|*[Ii]dle*)       cat=wait ;;
-*)                            cat=info ;;
+*[Pp]ermission*|*[Aa]pprove*)               cat=perm ;;
+*[Ww]aiting*|*[Ii]dle*[Nn]eeds your input*) cat=wait ;;
+*)                                          cat=info ;;
 esac
 
 # Without a pane we can't attribute the alert to a session or ring a tty.

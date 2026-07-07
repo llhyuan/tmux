@@ -70,7 +70,7 @@ fi
 
 # Show popup and switch on selection.
 target_origin=$(printf "%s" "$full_list" | grep -v '^$' | \
-    fzf-tmux -p "50%,50%" \
+    fzf-tmux -p "40%,35%" \
     --no-preview \
     --header="Claude windows — [PERM]/[WAIT]/[INFO] = pending alert")
 
